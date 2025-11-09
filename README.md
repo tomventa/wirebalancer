@@ -4,16 +4,18 @@ A high-performance outbound load balancer that uses multiple WireGuard connectio
 
 ## Why WireBalancer?
 
-This project was born out of the need for a fast and easy way to distribute outbound traffic across multiple WireGuard VPN connections. Whether you're looking to increase bandwidth, improve redundancy, or manage geo-distributed traffic, WireBalancer provides a simple solution.
+This project was born out of the need for a fast and easy way to distribute outbound traffic across multiple WireGuard VPN connections. 
+Whether you're looking to increase bandwidth, improve redundancy, or manage geo-distributed traffic, WireBalancer provides a simple solution.
 This is especially useful for applications that require multiple IP addresses or need to bypass geo-restrictions, censorship or rate limits imposed by certain services (e.g., web scraping, API access).
 
 ## Features
 
-- **High Performance**: Optimized Go implementation with connection pooling and buffer reuse
-- **Load Balancing**: Random or specific WireGuard connection selection
-- **SOCKS5 Proxy**: Industry-standard SOCKS5 protocol support
-- **Web dashboard**: Minimal web dashboard with live statistics
-- **Health Checks**: Automatic connection health monitoring with configurable intervals
+- **WireGuard Integration**: Seamlessly manages multiple WireGuard VPN connections
+- **SOCKS5 Proxies**: Exposes SOCKS5 proxies for easy integration with existing applications and libraries
+- **Web Dashboard**: Monitor connection health and statistics in real-time via a simple web interface
+- **Health Checks**: Automatic health monitoring and failover for WireGuard connections
+- **Randomized Proxy Selection**: Distributes traffic evenly across all healthy connections
+- **Dedicated Proxies**: Allows binding specific applications to specific WireGuard connections
 
 ## Architecture
 
@@ -42,11 +44,32 @@ This is especially useful for applications that require multiple IP addresses or
 └────────────────────────────────────────────┘
 ```
 
+## Usecases
+
+### Usecase 1: Scraping with well known VPN providers
+
+Imagine you want to scrape data from a website that limits requests based on IP addresses.
+With WireBalancer, you can buy a cheap VPN service that provides multiple connections (many well-known VPN providers offer 3 to 5 simultaneous connections even on their basic plans),
+than set up WireBalancer to distribute your scraping requests across these connections, effectively making your scraper appear to come from different IPs, thus increasing your scraping speed and reducing the chance of being blocked.
+You can also buy multiple cheap VPS instances and set up WireGuard on each of them to get more unique IP addresses for your scraping tasks.
+
+#### Usecase 2: Network Resilience
+
+Imagine you're running a critical application that requires constant internet connectivity, such as a remote monitoring system or a VoIP service.
+By using WireBalancer with multiple WireGuard connections, you can ensure that if one VPN connection goes down, your application can seamlessly switch to another healthy connection without any downtime.
+
+### Usecase 3: Only SOCKS5 Support
+
+Some applications only support SOCKS5 proxies for outbound connections, or at least it's the easiest way to configure them.
+With WireBalancer, you can leverage multiple WireGuard VPN connections and expose them as SOCKS5 proxies, allowing these applications to benefit from load balancing and failover without needing native WireGuard support.
+For example the "requests" library in Python has built-in SOCKS5 support.
+
+
 ## Quick Start
 
 ### Prerequisites
 
-- Docker and Docker Compose
+- Docker and Docker Compose (recommended) **or** Go 1.25 installed
 - WireGuard configuration files
 - Root/sudo access (required for WireGuard)
 
@@ -60,7 +83,6 @@ cd wirebalancer
 
 2. Create your WireGuard configurations:
 ```bash
-mkdir -p wireguard-configs
 # Copy your WireGuard .conf files to this directory
 cp /path/to/wg0.conf wireguard-configs/
 cp /path/to/wg1.conf wireguard-configs/
@@ -114,6 +136,8 @@ webserver:
   port: 9929                # Web dashboard port
 ```
 
+**Note**: If you change base_port, ensure your Docker Compose or Docker run command maps the correct ports.
+
 ## Port Mapping
 
 | Port | Description |
@@ -123,6 +147,7 @@ webserver:
 | 9931 | SOCKS5 proxy - WireGuard connection 0 |
 | 9932 | SOCKS5 proxy - WireGuard connection 1 |
 | 9933 | SOCKS5 proxy - WireGuard connection 2 |
+| 9934 | SOCKS5 proxy - WireGuard connection 3 |
 | ... | Additional connections as configured |
 
 ## Usage
@@ -176,7 +201,7 @@ go build -o wirebalancer .
 sudo ./wirebalancer -config config.yml
 ```
 
-### With Docker:
+### With Docker and without Docker Compose:
 
 ```bash
 docker build -t wirebalancer .
@@ -246,12 +271,12 @@ See [Quickstart.md](Quickstart.md) for a step-by-step guide to get started quick
 
 MIT License - See LICENSE file for details
 
+## A small note
+
+WireBalancer is an open-source project developed in my spare time and in a hurry (hence the somewhat rough edges).
+While I use it personally and it works well for my needs, please use it at your own risk and always review the code and configurations to ensure they meet your security and operational requirements.
+This project is provided "as is" without any warranties.
+
 ## Contributing
 
 Contributions are welcome! Please feel free to submit a Pull Request.
-
-## Support
-
-For issues and questions:
-- GitHub Issues: https://github.com/tomventa/wirebalancer/issues
-- Documentation: Check this README and example configurations
