@@ -237,26 +237,10 @@ The application is designed for high performance:
 4. **Atomic Operations**: Lock-free statistics tracking
 5. **Buffer Pool**: Shared buffer pool reduces GC pressure
 
-## Troubleshooting
+## Quick start
 
-### WireGuard interfaces not coming up
+See [Quickstart.md](Quickstart.md) for a step-by-step guide to get started quickly.
 
-1. Check WireGuard configuration files are valid
-2. Ensure container has proper capabilities (`NET_ADMIN`, `SYS_MODULE`)
-3. Verify kernel modules are loaded: `lsmod | grep wireguard`
-
-### Connections marked as unhealthy
-
-1. Check WireGuard connection: `docker exec wirebalancer wg show`
-2. Verify routing: `docker exec wirebalancer ip route`
-3. Test connectivity: `docker exec wirebalancer ping 8.8.8.8`
-4. Check logs: `docker compose logs -f wirebalancer`
-
-### SOCKS5 proxy not working
-
-1. Verify the proxy is listening: `netstat -tlnp | grep 9930`
-2. Check application logs for errors
-3. Test with curl: `curl -v -x socks5://localhost:9930 https://google.com`
 
 ## License
 

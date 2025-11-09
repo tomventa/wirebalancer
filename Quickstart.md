@@ -4,10 +4,10 @@
 
 WireBalancer is a high-performance load balancer that routes your traffic through multiple WireGuard VPN connections via SOCKS5 proxies. It's perfect for:
 
-- 🚀 Load balancing across multiple VPN connections
-- 🔄 Automatic failover when connections go down
-- 📊 Real-time monitoring of connection health
-- 🎯 Choosing specific connections for different applications
+- Load balancing across multiple VPN connections
+- Automatic failover when connections go down
+- Real-time monitoring of connection health
+- Choosing specific connections for different applications (this simplifies multi-threaded scraping tasks)
 
 ## Installation (5 minutes)
 
@@ -57,7 +57,7 @@ Open http://localhost:9929 in your browser
 
 ## Using the SOCKS5 Proxy
 
-### Port Assignments:
+### SOCKS5 Port Assignments:
 - **9930**: Random connection (load balanced)
 - **9931**: First WireGuard connection (wg0)
 - **9932**: Second WireGuard connection (wg1)
@@ -209,6 +209,20 @@ nano config.yml
 # Restart
 docker compose restart
 ```
+
+### WireGuard interfaces not coming up
+
+1. Check WireGuard configuration files are valid
+2. manual builds/outside docker: Ensure container has proper capabilities (`NET_ADMIN`, `SYS_MODULE`)
+3. manual builds/outside docker: Verify kernel modules are loaded: `lsmod | grep wireguard`
+
+### Connections marked as unhealthy
+
+1. Check WireGuard connection: `docker exec wirebalancer wg show`
+2. Verify routing: `docker exec wirebalancer ip route`
+3. Test connectivity: `docker exec wirebalancer ping 8.8.8.8`
+4. Check logs: `docker compose logs -f wirebalancer`
+
 
 ## Advanced Usage
 
