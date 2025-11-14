@@ -1,11 +1,41 @@
 # WireBalancer
 
-A high-performance outbound load balancer that uses multiple WireGuard connections and exposes SOCKS5 proxies for intelligent traffic routing.
+> Randomize the IP of your web requests.
+
+Wirebalancer is an outbound load balancer designed to distribute outbound traffic across multiple WireGuard VPN connections. 
+It launches multiple WireGuard connections from inside a single container, and exposes them as SOCKS5 proxies
+
+
+See it in action:
+
+1. Configure the `config.yaml`
+
+1. launch the proxy on your machine:
+
+```bash
+docker compose up -d
+```
+
+1. make randomized requests! Python example:
+
+```python
+import requests
+
+proxies = {
+    'http': 'socks5://localhost:9930',
+    'https': 'socks5://localhost:9930'
+}
+
+response = requests.get('https://api.ipify.org', proxies=proxies)
+print(response.text) 
+# > Your Ip will be different on each request
+```
+
+Check out the [quick start guide](#quick-start) for a complete guide.
 
 ## Why WireBalancer?
 
-This project was born out of the need for a fast and easy way to distribute outbound traffic across multiple WireGuard VPN connections. 
-Whether you're looking to increase bandwidth, improve redundancy, or manage geo-distributed traffic, WireBalancer provides a simple solution.
+This project simplifies the process of distributing outbound traffic across multiple WireGuard VPN connections. 
 This is especially useful for applications that require multiple IP addresses or need to bypass geo-restrictions, censorship or rate limits imposed by certain services (e.g., web scraping, API access).
 
 ## Features
