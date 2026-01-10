@@ -10,3 +10,4 @@ config.yml.bak
 # Custom-made project management files
 .vision-project
 .vision-properties
+ssh_host_key
