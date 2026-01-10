@@ -1,6 +1,8 @@
 *.conf
 *.zip
 *.log
+*.tmp
+*.old
 .DS_Store
 /wip/*
 config.yml
